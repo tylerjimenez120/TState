@@ -53,19 +53,16 @@ tyler-jmz@tyler:~/esp/codigos-tyler/examples/patrones/TState/build$ ./src/state_
 tyler-jmz@tyler:~/esp/codigos-tyler/examples/patrones/TState/build$ 
 
 
+# High-Performance State Pattern Lab (C++20)
+
+A robust, deterministic, and memory-efficient Finite State Machine (FSM) implementation designed for embedded systems (ESP32/STM32).
+
 ## 📊 State Transition Diagram
 
 ```mermaid
 stateDiagram-v2
     [*] --> Scanning
-
-    Scanning --> Mitigation : ANOMALY_DETECTED
-    Mitigation --> Scanning : MITIGATION_DONE
-
-    Scanning --> Error : FAILURE
-    Mitigation --> Error : FAILURE
-
-    Error --> Scanning : RECOVERY
-
-    Scanning --> [*] : SYSTEM_RESET
-    Mitigation --> [*] : SYSTEM_RESET
+    Scanning --> Mitigation : ANOMALY_DETECTED (Ev 1)
+    Mitigation --> Scanning : MITIGATION_DONE (Ev 3)
+    
+    note right of Scanning : Events 0 & 2 are ignored or internal
