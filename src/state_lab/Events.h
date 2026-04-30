@@ -1,0 +1,8 @@
+#pragma once
+
+enum class Event {
+  SCAN_COMPLETED,
+  ANOMALY_DETECTED,
+  SYSTEM_RESET,
+  MITIGATION_DONE
+};
