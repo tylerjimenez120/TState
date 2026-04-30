@@ -32,7 +32,16 @@ cmake ..
 make
 
 
+## State Transition Diagram
 
+```mermaid
+stateDiagram-v2
+    [*] --> Scanning
+    Scanning --> Mitigation : ANOMALY_DETECTED
+    Mitigation --> Scanning : MITIGATION_DONE
+    Scanning --> [*] : SYSTEM_RESET
+    Mitigation --> [*] : SYSTEM_RESET
+    
 
 tyler-jmz@tyler:~/esp/codigos-tyler/examples/patrones/TState/build$ ./src/state_app 
 --- INICIANDO LAB: STATE MACHINE (SOC SIMULATION) ---
