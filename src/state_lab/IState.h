@@ -16,6 +16,6 @@ public:
   IState &operator=(IState &&) = delete;
 
   virtual void on_enter() = 0;
-  virtual void handle_event(StateMachine &machine, Event event) = 0;
+  virtual IState *handle_event(Event event) = 0;
   virtual void on_exit() = 0;
 };

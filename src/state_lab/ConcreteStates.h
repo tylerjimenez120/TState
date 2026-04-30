@@ -1,23 +1,23 @@
 #pragma once
+
 #include "IState.h"
-#include "StateMachine.h"
 #include <iostream>
 
-// Forward Declaration para que Scanning conozca a Mitigation
+// Forward declarations of static instances
+class ScanningState;
 class MitigationState;
 
 class ScanningState final : public IState {
 public:
-  // Implementación de ciclo de vida
   void on_enter() override {
-    std::cout << "[SOC] ENTER: Activando escaneo de red y watchdog.\n";
+    std::cout << "[SOC] ENTER: Activating network scan and watchdog.\n";
   }
-
-  void handle_event(StateMachine &machine, Event event) override;
 
   void on_exit() override {
-    std::cout << "[SOC] EXIT: Deteniendo procesos de escaneo.\n";
+    std::cout << "[SOC] EXIT: Stopping scan processes.\n";
   }
+
+  IState *handle_event(Event event) override;
 
   static ScanningState *instance() {
     static ScanningState _instance;
@@ -28,19 +28,14 @@ public:
 class MitigationState final : public IState {
 public:
   void on_enter() override {
-    std::cout
-        << "[SOC] ENTER: Iniciando protocolo de mitigación (Bloqueo IP).\n";
-  }
-
-  void handle_event(StateMachine &machine, Event event) override {
-    if (event == Event::MITIGATION_DONE) {
-      machine.transition_to(ScanningState::instance());
-    }
+    std::cout << "[SOC] ENTER: Starting mitigation protocol (IP Block).\n";
   }
 
   void on_exit() override {
-    std::cout << "[SOC] EXIT: Limpieza de tablas de mitigación finalizada.\n";
+    std::cout << "[SOC] EXIT: Mitigation table cleanup finished.\n";
   }
+
+  IState *handle_event(Event event) override;
 
   static MitigationState *instance() {
     static MitigationState _instance;
@@ -48,9 +43,18 @@ public:
   }
 };
 
-// Implementación de la transición para evitar dependencia circular
-inline void ScanningState::handle_event(StateMachine &machine, Event event) {
+// --- Implementation of logic with state returns ---
+
+inline IState *ScanningState::handle_event(Event event) {
   if (event == Event::ANOMALY_DETECTED) {
-    machine.transition_to(MitigationState::instance());
+    return MitigationState::instance(); // Request transition
   }
+  return nullptr; // No transition
+}
+
+inline IState *MitigationState::handle_event(Event event) {
+  if (event == Event::MITIGATION_DONE) {
+    return ScanningState::instance(); // Request transition
+  }
+  return nullptr; // No transition
 }

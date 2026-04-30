@@ -27,26 +27,21 @@ public:
   StateMachine(StateMachine &&) = default;
   StateMachine &operator=(StateMachine &&) = default;
 
-  /**
-   * @brief Despacha un evento al estado actual.
-   */
   void dispatch(Event event) {
     if (_current_state) {
-      _current_state->handle_event(*this, event);
+      // The state decides WHERE to go, but the machine executes the move
+      IState *next_state = _current_state->handle_event(event);
+      if (next_state && next_state != _current_state) {
+        transition_to(next_state);
+      }
     }
   }
 
-  /**
-   * @brief Cambia el puntero del estado actual y ejecuta callbacks de
-   * salida/entrada.
-   */
   void transition_to(IState *next_state) {
-    if (_current_state) {
+    if (_current_state)
       _current_state->on_exit();
-    }
     _current_state = next_state;
-    if (_current_state) {
+    if (_current_state)
       _current_state->on_enter();
-    }
   }
 };
