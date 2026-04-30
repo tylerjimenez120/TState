@@ -26,7 +26,7 @@ A robust, deterministic, and memory-efficient Finite State Machine (FSM) impleme
 -   GoogleTest (automatically fetched via CMake)
 
 ### Build Instructions
-```bash
+bash
 mkdir build && cd build
 cmake ..
 make
@@ -53,11 +53,19 @@ tyler-jmz@tyler:~/esp/codigos-tyler/examples/patrones/TState/build$ ./src/state_
 tyler-jmz@tyler:~/esp/codigos-tyler/examples/patrones/TState/build$ 
 
 
-## State Transition Diagram
+## 📊 State Transition Diagram
+
 ```mermaid
 stateDiagram-v2
     [*] --> Scanning
+
     Scanning --> Mitigation : ANOMALY_DETECTED
     Mitigation --> Scanning : MITIGATION_DONE
+
+    Scanning --> Error : FAILURE
+    Mitigation --> Error : FAILURE
+
+    Error --> Scanning : RECOVERY
+
     Scanning --> [*] : SYSTEM_RESET
     Mitigation --> [*] : SYSTEM_RESET
